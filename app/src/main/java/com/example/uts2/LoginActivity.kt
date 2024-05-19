@@ -1,44 +1,50 @@
 package com.example.uts2
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 
-class LoginActivity : AppCompatActivity() {
 
+class LoginActivity : Activity() {
+    private var etUsername: EditText? = null
+    private var etPassword: EditText? = null
+    private var btnlogin: Button? = null
+    private val username = "admin"
+    private val password = "admin"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
-        val etEmail = findViewById<EditText>(R.id.etEmail)
-        val etPassword = findViewById<EditText>(R.id.etPassword)
-        val btnlogin = findViewById<Button>(R.id.btnlogin)
-        val btnRegister = findViewById<Button>(R.id.btnRegister)
-
-        btnlogin.setOnClickListener {
-            val email = etEmail.text.toString()
-            val password = etPassword.text.toString()
-
-            val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-            val savedEmail = sharedPreferences.getString("email", "")
-            val savedPassword = sharedPreferences.getString("password", "")
-
-            if (email == savedEmail && password == savedPassword) {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
+        etUsername = findViewById<View>(R.id.etUsername) as EditText
+        etPassword = findViewById<View>(R.id.etPassword) as EditText
+        btnlogin = findViewById<View>(R.id.btnlogin) as Button
+        btnlogin!!.setOnClickListener {
+            if (etUsername!!.getText().toString()
+                    .equals(username, ignoreCase = true) && etPassword!!.getText().toString()
+                    .equals(password, ignoreCase = true)
+            ) {
+                // Simpan username ke SharedPreferences
+                val sharedPreferences =
+                    getSharedPreferences("MyPrefs", MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putString("username", username)
+                editor.apply()
+                val login = Intent(
+                    this@LoginActivity,
+                    MainActivity::class.java
+                )
+                startActivity(login)
+                Toast.makeText(this@LoginActivity, "Selamat Datang", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@LoginActivity,
+                    "Username atau Password Yang Anda Masukkan Salah!!",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        }
-
-        btnRegister.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
         }
     }
 }
